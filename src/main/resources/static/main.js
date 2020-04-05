@@ -56,9 +56,8 @@ $(document).ready(function() {
 });
 
 function errorInfo (data) {
-    var spanResult = $('#result');
-    if (spanResult.text() !== "Stopped") {
+    var spanStop = $('#stopped');
+    if (spanStop.text() !== "Stopped") {
     alert(data["responseText"]);
     }
 }
-
