@@ -6,7 +6,6 @@ import com.example.searchtextonwebpages.model.UrlDto;
 import com.example.searchtextonwebpages.service.UrlService;
 import com.example.searchtextonwebpages.utils.WebPageUtil;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,7 @@ public class UrlController {
     @ResponseBody
     public String find(@RequestBody StartDataDto startDataDto) {
         urlService.deleteAll();
-        Set<Url> allUrls = webPageUtil.getAllUrls(startDataDto.getStartUrl(), startDataDto.getMaxCountUrls());
+        List<Url> allUrls = webPageUtil.getAllUrls(startDataDto.getStartUrl(), startDataDto.getMaxCountUrls());
         urlService.saveAll(allUrls);
         return webPageUtil.findText(startDataDto.getSearchText(), startDataDto.getThreadCount());
 
@@ -39,4 +38,3 @@ public class UrlController {
     }
 
 }
-

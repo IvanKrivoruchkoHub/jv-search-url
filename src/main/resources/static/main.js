@@ -23,8 +23,8 @@ function createTable (data) {
     $('#tableContainer').html(html);
 }
 
-var interval = setInterval(getDataForTable, 2000);
 $(document).ready(function() {
+    var interval = setInterval(getDataForTable, 2000);
     $("#start").click(function() {
         interval = setInterval(getDataForTable, 2000);
 

@@ -5,7 +5,6 @@ import com.example.searchtextonwebpages.model.UrlDto;
 import com.example.searchtextonwebpages.repository.UrlRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ public class UrlServiceImpl implements UrlService {
     private UrlRepository urlRepository;
 
     @Override
-    public List<Url> saveAll(Set<Url> urls) {
+    public List<Url> saveAll(List<Url> urls) {
         return urlRepository.saveAll(urls);
     }
 

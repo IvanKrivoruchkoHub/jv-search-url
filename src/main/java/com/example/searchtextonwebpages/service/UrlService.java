@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface UrlService {
-    List<Url> saveAll(Set<Url> urls);
+    List<Url> saveAll(List<Url> urls);
 
     List<Url> findNoneExceptionsUrl(int limit);
 

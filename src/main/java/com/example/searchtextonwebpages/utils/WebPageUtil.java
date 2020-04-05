@@ -4,11 +4,9 @@ import com.example.searchtextonwebpages.model.Url;
 import com.example.searchtextonwebpages.service.UrlService;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +24,7 @@ public class WebPageUtil {
     @Autowired
     private UrlService urlService;
 
-    private Set<Url> addUrlsFromPage(Document doc, int maxCountUrls, Set<Url> setUrls){
+    private List<Url> addUrlsFromPage(Document doc, int maxCountUrls, List<Url> setUrls){
         Elements urls = doc.select("a");
         for (Element tempUrl : urls) {
             if (maxCountUrls == 0) {
@@ -35,7 +33,7 @@ public class WebPageUtil {
             String tempUrlString = tempUrl.attr("abs:href");
             if (setUrls.stream().map(Url::getValue).noneMatch(v -> v.equals(tempUrlString))
                     && !"".equals(tempUrlString)
-                    && !tempUrlString.matches(".+\\.[^.]{0,6}$")
+                    && (tempUrlString.endsWith(".html") || !tempUrlString.matches(".+\\.[^.]{0,6}$"))
                     && !tempUrlString.contains("sign_in")) {
                 Url temUrlEntity = new Url();
                 temUrlEntity.setValue(tempUrl.attr("abs:href"));
@@ -51,12 +49,16 @@ public class WebPageUtil {
         return body != null && body.text().toLowerCase().contains(text.toLowerCase());
     }
 
-    public Set<Url> getAllUrls(String startedUrlString, int maxCountUrls) {
-        Set<Url> result = new LinkedHashSet<>();
+    public List<Url> getAllUrls(String startedUrlString, int maxCountUrls) {
+        List<Url> result = new ArrayList<>();
+        if (maxCountUrls == 0) {
+            return result;
+        }
         Url startedUrl = new Url();
         startedUrl.setValue(startedUrlString);
         result.add(startedUrl);
-        for (Url tempUrl: result) {
+        for (int i = 0; i < result.size(); i++) {
+            Url tempUrl = result.get(i);
             String status = null;
             Document doc = null;
             try {
@@ -71,7 +73,9 @@ public class WebPageUtil {
                 continue;
             }
             if (result.size() != maxCountUrls) {
-                result = addUrlsFromPage(doc, maxCountUrls - result.size(), result);
+                addUrlsFromPage(doc, maxCountUrls - result.size(), result);
+            } else {
+                break;
             }
         }
         return result;
@@ -87,7 +91,7 @@ public class WebPageUtil {
             }
             list = urlService.findNoneExceptionsUrl(countThread);
         }
-        return "Text not found";
+        return "Not found";
     }
 
     public Optional<Url> findTextOnUrls(List<Url> list, String searchText) {
@@ -125,11 +129,16 @@ public class WebPageUtil {
             Callable<Url> callable = () -> {
                 tempUrl.setStatus("Downloading");
                 urlService.updateStatus(tempUrl.getStatus(), tempUrl.getId());
-                boolean textOnPage = findTextOnPage(tempUrl.getValue(), searchText);
-                if (textOnPage) {
-                    tempUrl.setStatus("Found");
-                } else {
-                    tempUrl.setStatus("Not found");
+                boolean textOnPage = false;
+                try {
+                    textOnPage = findTextOnPage(tempUrl.getValue(), searchText);
+                    if (textOnPage) {
+                        tempUrl.setStatus("Found");
+                    } else {
+                        tempUrl.setStatus("Not found");
+                    }
+                } catch (Exception e) {
+                    tempUrl.setStatus(e.getMessage());
                 }
                 urlService.updateStatus(tempUrl.getStatus(), tempUrl.getId());
                 return textOnPage ? tempUrl : null;
