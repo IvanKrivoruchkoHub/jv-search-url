@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Searching text</title>
+    <script type="text/javascript"
+            src="webjars/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="main.js"></script>
+
+</head>
+<body>
+<form id="form">
+    <div class="container">
+        <label for="url"><b>Started Url</b></label>
+        <input size="70" type="text" placeholder="Enter url" id="url" required>
+        <br>
+        <label for="search_text"><b>Search text</b></label>
+        <input size="50" type="text" placeholder="Enter text" id="search_text" required>
+        <br>
+        <label for="count_urls"><b>Count urls</b></label>
+        <input size="10" type="number" placeholder="Enter count urls" id="count_urls" required>
+        <br>
+        <label for="count_threads"><b>Count threads</b></label>
+        <input size="10" type="number" placeholder="Enter count threads" id="count_threads" required>
+        <br>
+        <button type="submit" id = "start">Start</button>
+    </div>
+</form>
+<button type="submit" id = "stop">Stop</button>
+
+<br>
+
+<b><span typeof="text" id="stopped"></span></b>
+
+<div id="tableContainer"></div>
+
+</body>
+</html>
